@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../button_widget.dart';
+import '../components/rounded_button.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
   static const String id = 'registration_screen';
 
   @override
-  _RegistrationScreenState createState() => _RegistrationScreenState();
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {

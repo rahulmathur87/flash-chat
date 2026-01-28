@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flash_chat/button_widget.dart';
+import 'package:flash_chat/components/rounded_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
   static const String id = 'login_screen';
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {

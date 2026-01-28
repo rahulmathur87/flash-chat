@@ -2,14 +2,14 @@ import 'package:flash_chat/screens/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:flash_chat/button_widget.dart';
+import 'package:flash_chat/components/rounded_button.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
   static const String id = 'welcome_screen';
 
   @override
-  _WelcomeScreenState createState() => _WelcomeScreenState();
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen>
@@ -31,7 +31,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
     controller.addListener(() {
       setState(() {});
-      print(controller.value);
+      debugPrint(controller.value.toString());
     });
   }
 
