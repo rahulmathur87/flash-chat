@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 import '../components/rounded_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'chat_screen.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -12,13 +13,14 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  final auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   Future<void> signUp(String email, String password) async {
-    await auth.createUserWithEmailAndPassword(
+    await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
   }
+
   late String email;
   late String password;
   @override
@@ -58,13 +60,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             SizedBox(height: 24.0),
             RoundedButton(
               buttonColor: Colors.blueAccent,
-              onPressed: () {
+              onPressed: () async {
                 debugPrint(email);
                 debugPrint(password);
                 try {
-                  signUp(email, password);
-                }
-                catch (e) {
+                  await signUp(email, password);
+                  if (!context.mounted) return;
+                  Navigator.pushNamed(context, ChatScreen.id);
+                } catch (e) {
                   debugPrint(e as String?);
                 }
               },

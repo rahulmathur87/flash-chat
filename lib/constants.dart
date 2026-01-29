@@ -13,17 +13,12 @@ const kMessageTextFieldDecoration = InputDecoration(
 );
 
 const kMessageContainerDecoration = BoxDecoration(
-  border: Border(
-    top: BorderSide(color: Colors.lightBlueAccent, width: 2.0),
-  ),
+  border: Border(top: BorderSide(color: Colors.lightBlueAccent, width: 2.0)),
 );
 
 const kTextField = InputDecoration(
   hintText: 'Enter a value',
-  contentPadding: EdgeInsets.symmetric(
-    vertical: 10.0,
-    horizontal: 20.0,
-  ),
+  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
   border: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(32.0)),
   ),
