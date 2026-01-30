@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -16,12 +17,15 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     getCurrentUser();
   }
-
+  late String textMessage;
+  late String senderEmail;
   final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
 
   void getCurrentUser() async {
     User? user = await _auth.authStateChanges().first;
     debugPrint(user?.email);
+    senderEmail = user!.email!;
   }
 
   @override
@@ -56,12 +60,18 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: TextField(
                       onChanged: (value) {
                         //Do something with the user input.
+                        textMessage = value;
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _firestore.collection('messages').add({
+                        'text': textMessage,
+                        'sender': senderEmail,
+                      });
+                    },
                     style: ButtonStyle(
                       foregroundColor: WidgetStateProperty.all(
                         Colors.lightBlueAccent,
