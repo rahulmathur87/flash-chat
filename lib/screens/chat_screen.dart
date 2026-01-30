@@ -17,6 +17,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     getCurrentUser();
   }
+
   late String textMessage;
   late String senderEmail;
   final _auth = FirebaseAuth.instance;
@@ -51,6 +52,29 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            StreamBuilder(
+              stream: _firestore
+                  .collection('messages')
+                  .orderBy('createdAt', descending: false) // newest last
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const CircularProgressIndicator();
+                }
+
+                final docs = snapshot.data!.docs;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: docs.map((doc) {
+                    final sender = doc['sender'];
+                    final text = doc['text'];
+
+                    return Text('$sender : $text');
+                  }).toList(),
+                );
+              },
+            ),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -70,6 +94,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       _firestore.collection('messages').add({
                         'text': textMessage,
                         'sender': senderEmail,
+                        'createdAt': Timestamp.now(),
                       });
                     },
                     style: ButtonStyle(
