@@ -22,6 +22,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late String senderEmail;
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+  final TextEditingController _textController = TextEditingController();
 
   void getCurrentUser() async {
     User? user = await _auth.authStateChanges().first;
@@ -55,23 +56,72 @@ class _ChatScreenState extends State<ChatScreen> {
             StreamBuilder(
               stream: _firestore
                   .collection('messages')
-                  .orderBy('createdAt', descending: false) // newest last
+                  .orderBy('createdAt', descending: false)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return const CircularProgressIndicator();
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 final docs = snapshot.data!.docs;
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: docs.map((doc) {
-                    final sender = doc['sender'];
-                    final text = doc['text'];
+                return Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(12),
+                    children: docs.map((doc) {
+                      final sender = doc['sender'];
+                      final text = doc['text'];
+                      final isMe = sender == senderEmail;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Column(
+                          crossAxisAlignment:
+                          isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                          children: [
+                            // Sender name
+                            Text(
+                              sender,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
 
-                    return Text('$sender : $text');
-                  }).toList(),
+                            // Chat bubble
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              constraints: BoxConstraints(
+                                maxWidth: MediaQuery.of(context).size.width * 0.75,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isMe ? Colors.blue : Colors.grey.shade200,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: const Radius.circular(12),
+                                  topRight: const Radius.circular(12),
+                                  bottomLeft:
+                                  isMe ? const Radius.circular(12) : Radius.zero,
+                                  bottomRight:
+                                  isMe ? Radius.zero : const Radius.circular(12),
+                                ),
+                              ),
+                              child: Text(
+                                text,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: isMe ? Colors.white : Colors.black,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 );
               },
             ),
@@ -82,6 +132,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: <Widget>[
                   Expanded(
                     child: TextField(
+                      controller: _textController,
                       onChanged: (value) {
                         //Do something with the user input.
                         textMessage = value;
@@ -96,6 +147,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         'sender': senderEmail,
                         'createdAt': Timestamp.now(),
                       });
+                      _textController.clear();
                     },
                     style: ButtonStyle(
                       foregroundColor: WidgetStateProperty.all(
